@@ -33,51 +33,28 @@ public class QuizService {
         quizDao.save(quiz);
 
 
-
-//        List<Integer> questions=//call the generate url from the question service--restTemplate
-
-        //List<Question> questionsFromDb= questionDao.findRandomQuestionsByCategory(category,noOfQuestions);
-
-//        Quiz quiz=new Quiz();
-//        quiz.setTitle(title);
-//        quiz.setQuestions(questionsFromDb);
-//        quizDao.save(quiz);
         return new ResponseEntity<>("success", HttpStatus.CREATED);
     }
 
     public ResponseEntity<List<QuestionWrapper>> getQuizQuestions(Integer id)
     {
-        Optional<Quiz> quiz = quizDao.findById(id);
-//        List<Question> questionsFromDb = quiz.get().getQuestions();
-        List<QuestionWrapper> questionsForUser=new ArrayList<>();
-//
-//        for(Question q: questionsFromDb)
-//        {
-//            QuestionWrapper qw=new QuestionWrapper(q.getId(),q.getCategory(),q.getOption1(),q.getOption2(),q.getOption3(),q.getOption4(),q.getQuestionTitle());
-//            questionsForUser.add(qw);
-//
-//        }
-
-        return new ResponseEntity<>(questionsForUser,HttpStatus.OK);
 
 
+        Quiz quiz = quizDao.findById(id).get();
+        List<Integer> questionIds=quiz.getQuestionsIds();
+        ResponseEntity<List<QuestionWrapper>> questions =quizInterface.getQuestionsFromId(questionIds);
 
+
+        return questions;
     }
 
     public ResponseEntity<Integer> calculateResult(Integer id, List<Response> responses) {
 
-        Quiz quiz = quizDao.findById(id).get();
-//        List<Question> question = new ArrayList<>(quiz.getQuestions());
-        int result=0;
-//        int i=-1;
-//        for(Response r:responses)
-//        {
-//            i++;
-//            if(r.getResponse().equals(question.get(i).getRightAnswer()))
-//            {
-//                result++;
-//            }
-//        }
-        return new ResponseEntity<>(result,HttpStatus.OK);
+
+
+
+        ResponseEntity<Integer> score  = quizInterface.getScore(responses);
+
+        return score;
     }
 }
